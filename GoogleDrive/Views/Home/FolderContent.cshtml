@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "FolderCotent";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.file-upload').file_upload();
+    });
+</script>
+<h2>Folder: @ViewBag.FolderName</h2>
+<div id="panel">
+    <div class="container">
+        <ul class="list-inline">
+            <li><button id="btnCreateChildFolder" class="btn btn-primary">Create Folder</button></li>
+            <li><button id="btnRenameContent" class="btn btn-primary">Rename Folder</button></li>
+            <li><button id="btnDeleteContent" class="btn btn-primary">Delete Folder</button></li>
+            <li>    
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 ">
+                            <label class="file-upload btn btn-primary">
+                                Upload File <input type="file" />
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </li>
+        </ul>
+    </div>
+    <br>
+    <!-- Dialog Box-->
+    <div class="dialog" id="myform">
+        <form>
+            <label id="valueFromMyButton"></label>
+            <label style="color:black">New Folder</label>
+            &nbsp;&nbsp;&nbsp;
+            <div class="form-group">
+                <input type="text" id="foldername" class="form-control">
+            </div>&nbsp; &nbsp;
+            <div align="center" class="form-group">
+                <input type="button" class="btn btn-success " value="Create Folder" id="btnCreateFolder">
+            </div>
+        </form>
+    </div>
+</div>
+<div id="contentcontainer" class="cols box">
+
+</div>
+

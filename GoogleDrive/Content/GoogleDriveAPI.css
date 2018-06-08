@@ -1,0 +1,55 @@
+﻿.button {
+    border: 1px solid #333;
+    background: #6479fd;
+}
+    .button:hover {
+        background: #a4a9fd;
+    }
+
+.dialog {
+    margin: 90px 0px 0px 510px;
+    border: 1px solid #666;
+    padding: 20px;
+    background: rgba(216, 207, 207, 0.9);
+    position: absolute;
+    filter: alpha(opacity=50); /* For IE8 and earlier */
+    height: 200px;
+    width: 300px;
+    display: none;
+}
+
+    .dialog label {
+        display: inline-block;
+        color: #cecece;
+    }
+
+
+#btnCreateOK {
+    border: 1px solid #6479fd;
+    background: #ff6a00;
+    margin: 5px;
+}
+
+#btnCreateOK:hover {
+        border: 1px solid #000;
+        background: #ffacac;
+    }
+#container {
+    border: 3px solid #6479fd;
+    width: 100%;
+    max-width: 900px;
+    max-height: 1200px;
+    margin: 2em auto;
+    overflow-y: auto;
+}
+
+.cols {
+    column-count: 4;
+    column-gap: 10%;
+}
+.box {
+    margin-left: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-right: 10;
+}

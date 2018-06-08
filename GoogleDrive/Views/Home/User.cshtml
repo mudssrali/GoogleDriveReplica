@@ -1,0 +1,37 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+    ViewBag.Title = "Home";
+}
+
+<!--
+        <button class="btn btn-success" id="btncrtfolder">Create Folder</button>
+    <p id="test"></p>
+    -->
+<div id="panel">
+    <div class="container">
+        <ul class="list-inline">
+            <li><button id="btnCreateFolder" class="btn btn-primary">Create Folder</button></li>
+            <li><button id="btnRenameFolder" class="btn btn-primary">Rename Folder</button></li>
+            <li><button id="btnDeleteFolder" class="btn btn-primary">Delete Folder</button></li>
+        </ul>
+    </div>
+    <br>
+    <!-- Dialog Box-->
+    <div class="dialog" id="myform">
+        <form>
+            <label id="valueFromMyButton"></label>
+            <label style="color:black">New Folder</label>
+            &nbsp;&nbsp;&nbsp;
+            <div class="form-group">
+                <input type="text" id="foldername" class="form-control">
+            </div>&nbsp; &nbsp;
+            <div align="center" class="form-group">
+                <input type="button" class="btn btn-success " value="Create Folder" id="btnCreateOK">
+            </div>
+        </form>
+    </div>
+</div>
+<div id="container" class="cols box">
+
+</div>

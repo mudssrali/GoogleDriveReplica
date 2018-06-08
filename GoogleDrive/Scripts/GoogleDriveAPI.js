@@ -1,9 +1,28 @@
 ﻿$(document).ready(function () {
+
+    var fid = '';
+    var fname = '';
+    //Hiding operations delete, rename,
+    $('#btnRenameFolder').hide();
+    $('#btnDeleteFolder').hide();
+    //Getting all folder on dom ready
     GetAllFolder();
-    $('.folder-link').on('click',function (e) {
-        alert("single click");
-        return false;
+
+    // Displaying option on single click
+
+    $('#container').delegate('button', 'click', function () {
+        $('#btnRenameFolder').show();
+        $('#btnDeleteFolder').show();
+        fid = $(this).attr('id');
+        fname = $(this).text();
     });
+
+    // Renaming
+    $('#container').delegate('button', 'dblclick', function () {
+        alert($(this).attr('id'));
+    });
+
+    //Annonymous function for different handlers
     $(function () {
         $("#btnCreateFolder").click(function () {
             $("#myform #valueFromMyButton").text($(this).val());
@@ -42,10 +61,17 @@
                 }
             });
             
-        }); 
+        });
+        $("#btnRenameFolder").click(function () {
+            alert("rename method");
+        });
+        $("#btnDeleteFolder").click(function () {
+
+            DeleteFolder(fid);
+
+        });
     });   
 });
-function singleClickFunc() { return false;}
 function GetAllFolder()
 {
     var folderID="";
@@ -63,44 +89,59 @@ function GetAllFolder()
                     folderID = JSONObject[key]['ID'];
 
                     // Creating Image element
-                    var img = $("<img id='ficon" + JSONObject[key]['ID'] + "'> "); //Equivalent: $(document.createElement('img'))
+                    var img = $("<img id='ficon" + JSONObject[key]['ID'] + "' style='border: none; padding: 0; background: none'> "); //Equivalent: $(document.createElement('img'))
                     img.attr('src', 'GetImage');
-                    img.attr('class', "folder-link");
                     img.attr('width', 64);
                     img.attr('height', 64);
-                    img.attr('onclick', "singleClickFunc()");
+                    
                     img.appendTo('#container');
-                    $("#ficon" + folderID).wrap($('<a>', {
-                        href: 'foldercontent?folderID=' + folderID,
-                        class: 'folder-link',
-                        onclick: "singleClickFunc()",
+
+                    // wrapping link arround image
+                    $("#ficon" + folderID).wrap($('<button>',{
+                        id: folderID,
+                        style: 'border: none; padding: 0; background: none',
+                        class: 'flink',
                     }));
 
+                   // Creating folder named link
+                   // var namedlink = $('<a>');
+                   // namedlink.text(JSONObject[key]['Name']);
+                   // namedlink.attr('href', 'foldercontent?folderID=' + folderID);
+                   // namedlink.attr('class', "flink");
+                   // namedlink.appendTo('#container');
+
                     // Creating folder named link
-                    var para = $("<a href='foldercontent?folderID="+folderID+"' class='folder-link' onclick='singleClickFunc()'>");
-                    para.text(JSONObject[key]['Name']);
-                    para.appendTo('#container');
-                   
+                    var namedlink = $('<button>');
+                    namedlink.text(JSONObject[key]['Name']);
+                    namedlink.attr('style', 'border:none');
+                    namedlink.attr('id', folderID);
+                    namedlink.attr('class', 'flink');
+                    namedlink.attr('style', 'border: none; padding: 0; background: none')
+                    namedlink.appendTo('#container');            
                 }
             }
         }
     });
 }
-function DeleteFolder(fid)
+// Deleting a folder using folder id
+function DeleteFolder(folderid)
 {
     $.ajax({
         dataType: 'json',
         type: "GET",
-        url: "http://localhost:14125/api/Folder/RemoveFolder?folderid=" + fid,
+        url: "http://localhost:14125/api/Folder/RemoveFolder?folderid=" + folderid,
         contentType: false,
         processData: false,
         success: function (response) {
             alert("Folder Deleted");
+            $('#btnRenameFolder').hide();
+            $('#btnDeleteFolder').hide();
             $("#container").empty();
             GetAllFolder();
         }
     });
 }
+// Renaming a folder using folder id
 function RenameFolder(fname,fid) {
     $.ajax({
         dataType: 'json',

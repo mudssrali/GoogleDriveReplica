@@ -15,7 +15,7 @@ namespace GoogleDriveAPI.Controllers
             return "Pakistan";
         }
         [HttpGet]
-        public FolderDTO SetFolderName(string foldername)
+        public String CreateFolder(string foldername)
         {
             var dto = new FolderDTO();
             dto.Name = foldername;
@@ -27,13 +27,13 @@ namespace GoogleDriveAPI.Controllers
             {
                 dto.ID = ID;
             }
-            return dto;
+            return "newfolder";
         }
-        public FolderDTO CreateFolder(string foldername, int parentid)
+        public String CreateFolder(string foldername, int pfid)
         {
             var dto = new FolderDTO();
             dto.Name = foldername;
-            dto.ParentFolderID = parentid;
+            dto.ParentFolderID = pfid;
             dto.CreatedOn = DateTime.Now;
             dto.IsActive = true;
             int ID = FolderBO.SaveFolderInfo(dto);
@@ -41,7 +41,7 @@ namespace GoogleDriveAPI.Controllers
             {
                 dto.ID = ID;
             }
-            return dto;
+            return "New folder created";
         }
         [HttpGet]
         public List<FolderDTO> GetAllFolder()
@@ -49,9 +49,9 @@ namespace GoogleDriveAPI.Controllers
             return FolderBO.GetAllFolderInfo();
         }
         [HttpGet]
-        public String RemoveFolder(int folderid)
+        public String RemoveFolder(int fid)
         {
-            int rev = FolderBO.DeleteFolder(folderid);
+            int rev = FolderBO.DeleteFolder(fid);
             if (rev > 0)
             {
                 return "Deleted";
@@ -59,16 +59,16 @@ namespace GoogleDriveAPI.Controllers
             return "Error";
         }
         [HttpGet]
-        public String RenameFolder(string foldername,int folderid)
+        public String RenameFolder(string foldername,int fid)
         {
-            int rev = FolderBO.RenameFolder(foldername,folderid);
+            int rev = FolderBO.RenameFolder(foldername,fid);
             if (rev > 0)
             {
-                return "Updated";
+                return "Folder name updated";
             }
-            return "Error";
+            return "Error for updating folder name";
         }
-
+        
 
     }
 }

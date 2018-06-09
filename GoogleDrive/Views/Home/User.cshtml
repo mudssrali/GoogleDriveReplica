@@ -15,11 +15,11 @@
             <li><button id="btnRenameFolder" class="btn btn-primary">Rename Folder</button></li>
             <li><button id="btnDeleteFolder" class="btn btn-primary">Delete Folder</button></li>
             <li><button id="btnDownloadFile" class="btn btn-primary">Download File</button></li>
-            <li><button id="btnUploadFile"   class="btn btn-primary">Upload File</button></li>
+            <li><button id="btnUploadFile" class="btn btn-primary">Upload File</button></li>
         </ul>
     </div>
     <br>
-    <!-- Dialog Box-->
+    <!-- Create/Rename Dialog Box-->
     <div class="dialog" id="myform">
         <form>
             <label id="popup-title" style="color:black">New Folder</label>
@@ -29,6 +29,19 @@
             </div>&nbsp; &nbsp;
             <div align="center" class="form-group">
                 <input type="button" class="btn btn-success " value="Create Folder" id="btnCreateOK">
+            </div>
+        </form>
+    </div>
+    <!-- File Upload Dialog Box -->
+    <div class="upload-dialog" id="fileUploadForm">
+        <form>
+            <label id="titleUploadPopup" style="color:black">Upload File</label>
+            &nbsp;&nbsp;&nbsp;
+            <div class="form-group">
+                <input type="file" id="uploadFileName" class="form-control">
+            </div>&nbsp; &nbsp;
+            <div align="center" class="form-group">
+                <input type="button" class="btn btn-primary " value="Upload File" id="btnUploadOK">
             </div>
         </form>
     </div>

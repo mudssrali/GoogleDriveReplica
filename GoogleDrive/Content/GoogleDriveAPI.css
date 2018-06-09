@@ -17,8 +17,19 @@
     width: 300px;
     display: none;
 }
+.upload-dialog {
+    margin: 90px 0px 0px 510px;
+    border: 1px solid #666;
+    padding: 20px;
+    background: rgba(216, 207, 207, 0.9);
+    position: absolute;
+    filter: alpha(opacity=50); /* For IE8 and earlier */
+    height: 300px;
+    width: 400px;
+    display: none;
+}
 
-    .dialog label {
+ .dialog label {
         display: inline-block;
         color: #cecece;
     }
@@ -34,6 +45,16 @@
         border: 1px solid #000;
         background: #ffacac;
     }
+#btnUploadOK {
+    border: 1px solid #6479fd;
+    background: #ff6a00;
+    margin: 5px;
+}
+#btnUploadOK {
+    border: 1px solid #6479fd;
+    background: #ff6a00;
+    margin: 5px;
+}
 #container {
     width: 100%;
     max-width: 900px;

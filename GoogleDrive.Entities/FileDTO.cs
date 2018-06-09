@@ -9,5 +9,8 @@
         public System.Int32 Size { get; set; }
         public System.DateTime UploadOn { get; set; }
         public System.Boolean IsActive { get; set;}
+        public System.String FileType { get; set; }
+        public System.String UniqueName { get; set; }
+
     }
 }

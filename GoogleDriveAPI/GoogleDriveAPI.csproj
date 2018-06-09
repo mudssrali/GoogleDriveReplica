@@ -173,7 +173,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
-    <Folder Include="Content\Images\" />
     <Folder Include="Files\" />
   </ItemGroup>
   <ItemGroup>

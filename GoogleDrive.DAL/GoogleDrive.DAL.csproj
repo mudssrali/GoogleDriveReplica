@@ -7,8 +7,8 @@
     <ProjectGuid>{EB23D76D-B93B-4904-BD7E-C00A4FB07431}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PMS.DAL</RootNamespace>
-    <AssemblyName>PMS.DAL</AssemblyName>
+    <RootNamespace>GoogleDrive.DAL</RootNamespace>
+    <AssemblyName>GoogleDrive.DAL</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBHelper.cs" />
+    <Compile Include="FileDAO.cs" />
     <Compile Include="FolderDAO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserDAO.cs" />

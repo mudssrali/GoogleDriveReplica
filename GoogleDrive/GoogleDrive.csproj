@@ -162,6 +162,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\file-upload.css" />
     <Content Include="Content\GoogleDriveAPI.css" />
+    <Content Include="Content\Image\folder-icon2.png" />
     <Content Include="Content\Image\folder-icon.png" />
     <Content Include="Content\loginformat.css" />
     <Content Include="favicon.ico" />

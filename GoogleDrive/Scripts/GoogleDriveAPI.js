@@ -1,8 +1,10 @@
 ﻿$(document).ready(function () {
 
+    var IS_DOUBLE_TRIGGERED = false;
     var fid = '';       // folder id
     var fname = '';     // folder name
     var filename = '';  // file name
+   
 
     //Hiding operations delete, rename, upload, download
     $('#btnRenameFolder').hide();
@@ -15,14 +17,17 @@
 
     // Displaying option on single click
     $('#container').delegate('button', 'click', function () {
-        $('#btnRenameFolder').show();
-        $('#btnDeleteFolder').show();
-        fid = $(this).attr('id');
-        fname = $(this).text();
+        if (IS_DOUBLE_TRIGGERED == false) {
+            $('#btnRenameFolder').show(150);
+            $('#btnDeleteFolder').show(150);
+            fid = $(this).attr('id');
+            fname = $(this).text();
+        }
     });
     
     // Openning folder with double click
     $('#container').delegate('button', 'dblclick', function () {
+        IS_DOUBLE_TRIGGERED = true;
         $('#btnRenameFolder').hide();
         $('#btnDeleteFolder').hide();
         fid = $(this).attr('id');
@@ -36,6 +41,7 @@
 
     //Annonymous function for different handlers
     $(function () {
+        // Creating folder
         $("#btnCreateFolder").click(function () {
             $("#myform #valueFromMyButton").text($(this).val());
             $("#myform input[type=text]").val(fname);
@@ -71,8 +77,28 @@
         // BUTTON HANDLER FOR DELETING A FOLDER
         $("#btnDeleteFolder").click(function () {
             //alert("deletion method")
-            DeleteFolder(fid);
-            fid = 0; // setting NULL Folder id to ZERO
+            
+            if (confirm("Are you sure to delete?")) {
+                DeleteFolder(fid);
+            }
+            else {
+                $('#btnRenameFolder').hide();
+                $('#btnDeleteFolder').hide();
+                fid = 0; // setting NULL Folder id to ZERO
+            }
+        });
+
+        // BUTTON HANDLER FOR FILE UPLOADING
+        $("#btnUploadFile").click(function(){
+            $("#fileUploadForm #titleUploadPopup").text('Upload File');
+            $("#fileUploadForm input[type=file]").val('');
+            $("#fileUploadForm").show(400);
+        });
+        $("#btnUploadOK").click(function () {
+            //alert("upload file");
+            var customURL = "http://localhost:14125/api/Folder/UploadFile";
+            UploadFile(customURL);
+            $("#fileUploadForm").hide(200);
         });
     });   
 });
@@ -181,4 +207,25 @@ function RenameFolder(customURL) {
             GetAllFolder();
         }
     });
+}
+// Uploading file
+function UploadFile(customURL) {
+    var data = new FormData();
+    var pfolderid = fid;
+    var file = $('#fileUploadForm input[type=file]')[0].files[0];
+    data.append('file', file);
+    data.append('pdif', pfolderid);
+        $.ajax({
+            url: customURL,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            data: data,
+            type: 'POST',
+        success:function (result) {
+            alert(result);
+            console.log(result);
+        error:function (a, b, c) {
+            console.log(a, b, c);
+        });
 }

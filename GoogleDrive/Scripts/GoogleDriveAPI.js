@@ -10,7 +10,8 @@
     $('#btnRenameFolder').hide();
     $('#btnDeleteFolder').hide();
     $('#btnUploadFile').hide();
-    $('#btnDownloadFile').hide();
+    $('#btnDownloadMetaFile').hide();
+    $('#fileInfoTable').hide();
 
     //Getting all folder on dom ready
     GetAllFolder();
@@ -34,8 +35,11 @@
         fname = $(this).text();
         $('#container').empty();
         $('#btnUploadFile').show();
-        $('#btnDownloadFile').show();
-        
+        $('#btnDownloadMetaFile').show();
+        // For File Info Table
+        $('#container').removeClass('cols');
+        CreateFileTable();
+        GetAllFiles();
 
     });
 
@@ -96,12 +100,22 @@
         });
         $("#btnUploadOK").click(function () {
             //alert("upload file");
-            var customURL = "http://localhost:14125/api/Folder/UploadFile";
+            var customURL = "http://localhost:14125/api/FileData/UploadFile";
             UploadFile(customURL);
             $("#fileUploadForm").hide(200);
         });
+
+        // BUTTON HANDLER FOR DOWNLOADING FILE
+        $("#container").delegate('a','click',function () {
+            var uniquename = $(this).attr('uname');
+            //alert(uniquename);
+            var customURL = "http://localhost:14125/api/FileData/DownloadFile?uniqueName=" + uniquename;
+            DownloadFile(customURL);
+        });
+
     });   
 });
+// Displying all folders
 function GetAllFolder()
 {
     var folderID="";
@@ -153,7 +167,37 @@ function GetAllFolder()
         }
     });
 }
-
+// Displaying all files
+function GetAllFiles()
+{
+    var fileID = "";
+    var fileName = "";
+    var fileInfo = "";
+    $.ajax({
+        dataType: 'json',
+        type: "GET",
+        url: "http://localhost:14125/api/FileData/GetAllFiles",
+        contentType: false,
+        processData: false,
+        success: function (JSONObject) {
+            for (var key in JSONObject) {
+                if (JSONObject.hasOwnProperty(key)) {
+                    fileInfo += "<tr id=" + JSONObject[key]["ID"] + ">";
+                    fileInfo += "<td>" + JSONObject[key]["Name"] + "</td>";
+                    fileInfo += "<td>" + JSONObject[key]["FileType"] + "</td>";
+                    fileInfo += "<td>" + JSONObject[key]["Size"]+" KB" + "</td>";
+                    fileInfo += "<td><a href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Download'>Download</a></td>";
+                   // fileInfo +=
+                    //    "<td><a href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Delete'></a></td>";
+                    fileInfo += "<td><img src='http://localhost:14125/api/FileData/GetThumbnail?uniqueName="+JSONObject[key]["UniqueName"]+"' style='width:10%; height:3%'></img></td>";
+                    fileInfo += "</tr>";
+                }
+            }
+            // Replace table’s tbody html with fileInfo
+            $("#fileInfoTable tbody").html(fileInfo);       
+        }
+    });
+}
 // Creating a new folder 
 function CreateFolder(customURL) {
     $.ajax({
@@ -211,21 +255,37 @@ function RenameFolder(customURL) {
 // Uploading file
 function UploadFile(customURL) {
     var data = new FormData();
-    var pfolderid = fid;
+    //var pfolderid = fid;
     var file = $('#fileUploadForm input[type=file]')[0].files[0];
     data.append('file', file);
-    data.append('pdif', pfolderid);
+    //data.append('pdif', pfolderid);
         $.ajax({
             url: customURL,
-            dataType: 'json',
             processData: false,
             contentType: false,
             data: data,
             type: 'POST',
-        success:function (result) {
-            alert(result);
-            console.log(result);
-        error:function (a, b, c) {
-            console.log(a, b, c);
+            success: function (result) {
+                alert('File Uploaded');
+             //   console.log(result);
+                $('#container').removeClass('cols');
+                $('#fileInfoTable').remove();
+                CreateFileTable();
+                GetAllFiles();
+            }
         });
+}
+// Downloading file
+function DownloadFile(customURL) {
+    window.open(customURL);
+}
+
+// Creating dynamic table
+function CreateFileTable() {
+    var $table = $('<table class="table table-borderd table-responsive" id="fileInfoTable">');
+    $table.append('<thead>').children('thead')
+        .append('<tr />').children('tr')
+        .append('<th>Name</th><th>Type</th><th>Size</th><th>Download</th><th>Preview</th><th>Delete</th>');
+    $table.append('<tbody />').children('tbody');
+    $table.appendTo("#container");
 }

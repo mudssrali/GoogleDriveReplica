@@ -24,7 +24,7 @@ namespace GoogleDrive.DAL
 
         public static FileDTO GetFileInfoByUN(string uniqueName)
         {
-            var query = $"SELECT * FROM dbo.Files WHERE ID='{uniqueName}'";
+            var query = $"SELECT * FROM dbo.Files WHERE UniqueName='{uniqueName}'";
             using (var helper = new DBHelper())
             {
                 var reader = helper.ExecuteReader(query);
@@ -70,7 +70,7 @@ namespace GoogleDrive.DAL
         }
         public static Int32 SaveFileInfo(FileDTO dto)
         {
-            var query = $"INSERT dbo.Files(Name,UniqueName, ParentFolderID,FileExt,FileSizeInKB,UploadOn,IsActive) " +
+            var query = $"INSERT dbo.Files(Name,UniqueName, ParentFolderID,FileExt,FileSizeInKB,UploadOn,FileType,IsActive) " +
                 $"OUTPUT INSERTED.ID VALUES('{dto.Name}','{dto.UniqueName}','{dto.ParentFolderID}','{dto.Extension}'," +
                 $"'{dto.Size}','{dto.UploadOn}','{dto.FileType}','{dto.IsActive}')";
             using (var helper = new DBHelper())

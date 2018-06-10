@@ -1,5 +1,8 @@
 ﻿using GoogleDrive.BAL;
 using GoogleDrive.Entities;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
 using Microsoft.WindowsAPICodePack.Shell;
 using System;
 using System.Collections.Generic;
@@ -152,7 +155,7 @@ namespace GoogleDriveAPI.Controllers
             }
 
         }
-        private byte[] ImageToByte2(Image img)
+        private byte[] ImageToByte2(System.Drawing.Image img)
         {
             using (var stream = new MemoryStream())
             {
@@ -160,5 +163,67 @@ namespace GoogleDriveAPI.Controllers
                 return stream.ToArray();
             }
         }
+        [HttpGet]
+        public Object GenerateMetadata(int folderid)
+        {
+
+            var FolderDTO = FolderBO.GetFolderInfoByID(folderid);
+            var FileDTO = FileBO.GetAllFileInfo(folderid);
+
+
+            // Generating Guid
+            String fileName = Guid.NewGuid().ToString()+".pdf";
+
+            // Physical path of root folder
+            var rootPath = HttpContext.Current.Server.MapPath("~/Files");
+            var filefullpath = Path.Combine(rootPath, fileName);
+            
+            // Making pdf file
+            var writer = new PdfWriter(filefullpath);
+            var pdf = new PdfDocument(writer);
+            var document = new Document(pdf);
+
+            document.Add(new Paragraph("Name: " + FolderDTO.Name));
+            document.Add(new Paragraph("Type: Folder"));
+            document.Add(new Paragraph("Size:  KB"));
+            if(FolderDTO.ParentFolderID==0)
+            document.Add(new Paragraph("Parent: ROOT"));
+            else
+            document.Add(new Paragraph("Parent: "+FolderDTO.ParentFolderID));
+            document.Add(new Paragraph(Environment.NewLine));
+
+            foreach (var item in FileDTO)
+            { 
+                document.Add(new Paragraph("Name: "+item.Name));
+                document.Add(new Paragraph("Type: " +item.FileType));
+                document.Add(new Paragraph("Size: " + (item.Size)+ " KB"));
+                document.Add(new Paragraph("Parent: "));
+                document.Add(new Paragraph(Environment.NewLine));
+            }
+            
+            document.Close();
+
+           
+            if (fileName != null)
+            {
+                HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+
+                byte[] file = File.ReadAllBytes(filefullpath);
+                MemoryStream ms = new MemoryStream(file);
+
+                response.Content = new ByteArrayContent(file);
+                response.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/pdf");
+                response.Content.Headers.ContentDisposition.FileName = fileName;
+                return response;
+            }
+            else
+            {
+                HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+                return response;
+            }
+        }
+
     }
 }

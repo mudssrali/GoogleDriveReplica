@@ -17,6 +17,10 @@ namespace GoogleDrive.BAL
         {
             return GoogleDrive.DAL.FileDAO.GetAllFileInfo();
         }
+        public static List<FileDTO> GetAllFileInfo(int fid)
+        {
+            return GoogleDrive.DAL.FileDAO.GetAllFileInfo(fid);
+        }
         public static System.Int32 SaveFileInfo(FileDTO dto)
         {
             return GoogleDrive.DAL.FileDAO.SaveFileInfo(dto);

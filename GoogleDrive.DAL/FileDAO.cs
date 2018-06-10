@@ -21,7 +21,6 @@ namespace GoogleDrive.DAL
                 return dto;
             }
         }
-
         public static FileDTO GetFileInfoByUN(string uniqueName)
         {
             var query = $"SELECT * FROM dbo.Files WHERE UniqueName='{uniqueName}'";
@@ -40,6 +39,23 @@ namespace GoogleDrive.DAL
         public static List<FileDTO> GetAllFileInfo()
         {
             var query = "SELECT * FROM dbo.Files WHERE IsActive=1";
+            using (var helper = new DBHelper())
+            {
+                var reader = helper.ExecuteReader(query);
+
+                List<FileDTO> list = new List<FileDTO>();
+                while (reader.Read())
+                {
+                    FileDTO dto = new FileDTO();
+                    dto = FillDTO(reader);
+                    list.Add(dto);
+                }
+                return list;
+            }
+        }
+        public static List<FileDTO> GetAllFileInfo(int fid)
+        {
+            var query = $"SELECT * FROM dbo.Files WHERE IsActive=1 AND parentFolderID='{fid}'";
             using (var helper = new DBHelper())
             {
                 var reader = helper.ExecuteReader(query);

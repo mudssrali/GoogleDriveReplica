@@ -18,7 +18,7 @@ namespace GoogleDriveAPI.Controllers
     public class FileDataController : ApiController
     {
         [HttpPost]
-        public int UploadFile()
+        public int UploadFile(int parentid)
         {
             var dto = new FileDTO();
             int rev = 0;
@@ -57,9 +57,10 @@ namespace GoogleDriveAPI.Controllers
                         if (file != null)
                         {
                             dto.Name = file.FileName;
-                            dto.Extension = System.IO.Path.GetExtension(file.FileName);
+                            dto.Extension = Path.GetExtension(file.FileName);
                             dto.IsActive = true;
                             dto.UploadOn = DateTime.Now;
+                            dto.ParentFolderID = parentid;
                             dto.Size = (file.ContentLength / 1024);
                             dto.FileType = file.ContentType;
                             dto.UniqueName = Guid.NewGuid().ToString();
@@ -67,7 +68,7 @@ namespace GoogleDriveAPI.Controllers
                             // Getting physical path of folder where to save uploaded file 
                             var rootPath = HttpContext.Current.Server.MapPath("~/Files/");
 
-                            var fileSavePath = System.IO.Path.Combine(rootPath, dto.UniqueName + dto.Extension);
+                            var fileSavePath = Path.Combine(rootPath, dto.UniqueName + dto.Extension);
 
                             // Save the uploaded file to 'Files' directory
                             file.SaveAs(fileSavePath);
@@ -116,9 +117,9 @@ namespace GoogleDriveAPI.Controllers
             }
         }
         [HttpGet]
-        public List<FileDTO> GetAllFiles()
+        public List<FileDTO> GetAllFiles(int parentid)
         {
-            return GoogleDrive.BAL.FileBO.GetAllFileInfo();
+            return GoogleDrive.BAL.FileBO.GetAllFileInfo(parentid);
         }
         [HttpGet]
         public Object GetThumbnail(string uniqueName)
@@ -197,7 +198,7 @@ namespace GoogleDriveAPI.Controllers
                 document.Add(new Paragraph("Name: "+item.Name));
                 document.Add(new Paragraph("Type: " +item.FileType));
                 document.Add(new Paragraph("Size: " + (item.Size)+ " KB"));
-                document.Add(new Paragraph("Parent: "));
+                document.Add(new Paragraph("Parent: "+FolderDTO.Name));
                 document.Add(new Paragraph(Environment.NewLine));
             }
             

@@ -4,17 +4,13 @@
     ViewBag.Title = "Home";
 }
 
-<!--
-        <button class="btn btn-success" id="btncrtfolder">Create Folder</button>
-    <p id="test"></p>
-    -->
 <div id="panel">
     <div class="container">
         <ul class="list-inline">
             <li><button id="btnCreateFolder" class="btn btn-primary">Create Folder</button></li>
             <li><button id="btnRenameFolder" class="btn btn-primary">Rename Folder</button></li>
             <li><button id="btnDeleteFolder" class="btn btn-primary">Delete Folder</button></li>
-            <li><button id="btnDownloadMetaFile" class="btn btn-primary">Download Metadata As PDF</button></li>
+            <li><button id="btnDownloadMetadataFile" class="btn btn-primary">Download Metadata As PDF</button></li>
             <li><button id="btnUploadFile" class="btn btn-primary">Upload File</button></li>
         </ul>
     </div>
@@ -23,12 +19,14 @@
     <div class="dialog" id="myform">
         <form>
             <label id="popup-title" style="color:black">New Folder</label>
-            &nbsp;&nbsp;&nbsp;
+            <span style="float:right">
+                <button id="btnCloseCreateDialog" class="btn btn-sm">X</button>
+            </span>
             <div class="form-group">
                 <input type="text" id="foldername" class="form-control">
-            </div>&nbsp; &nbsp;
+            </div>
             <div align="center" class="form-group">
-                <input type="button" class="btn btn-success " value="Create Folder" id="btnCreateOK">
+                <button class="btn btn-primary" id="btnCreateOK">Create Folder</button>
             </div>
         </form>
     </div>
@@ -36,16 +34,30 @@
     <div class="upload-dialog" id="fileUploadForm">
         <form>
             <label id="titleUploadPopup" style="color:black">Upload File</label>
-            &nbsp;&nbsp;&nbsp;
+            <span style="float:right">
+                <button id="btnCloseUploadDialog" class="btn btn-group">X</button>
+            </span>
+            <br>
             <div class="form-group">
                 <input type="file" id="uploadFileName" class="form-control">
-            </div>&nbsp; &nbsp;
-            <div align="center" class="form-group">
-                <input type="button" class="btn btn-primary " value="Upload File" id="btnUploadOK">
+            </div>
+            <div align="center">
+                <button class="btn btn-primary"  id="btnUploadOK"> Upload File</button>
             </div>
         </form>
     </div>
 </div>
+<div class="jeg_breadcrumbs">
+    <div class="container jeg_breadcrumb_category jeg_breadcrumb_container">
+        <div id="breadcrumbs">
+            <span class="">
+                <a href="user">Home</a>
+            </span>
+           <!-- <i class="fa fa-angle-right"></i>-->
+
+        </div>
+    </div>
+</div>
 <div id="container" class="cols box">
-    
+
 </div>

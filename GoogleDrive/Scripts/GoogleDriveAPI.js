@@ -33,11 +33,9 @@
         $('#btnDeleteFolder').hide();
         fid = $(this).attr('id');
         fname = $(this).text();
-        $('#container').empty();
         $('#btnUploadFile').show();
         $('#btnDownloadMetaFile').show();
         // For File Info Table
-        $('#container').removeClass('cols');
         CreateFileTable();
         GetAllFiles();
 
@@ -81,9 +79,9 @@
         // BUTTON HANDLER FOR DELETING A FOLDER
         $("#btnDeleteFolder").click(function () {
             //alert("deletion method")
-            
             if (confirm("Are you sure to delete?")) {
-                DeleteFolder(fid);
+                var customURL = "http://localhost:14125/api/Folder/RemoveFolder?fid=" + fid;
+                DeleteFolder(customURL);
             }
             else {
                 $('#btnRenameFolder').hide();
@@ -106,11 +104,23 @@
         });
 
         // BUTTON HANDLER FOR DOWNLOADING FILE
-        $("#container").delegate('a','click',function () {
-            var uniquename = $(this).attr('uname');
-            //alert(uniquename);
-            var customURL = "http://localhost:14125/api/FileData/DownloadFile?uniqueName=" + uniquename;
-            DownloadFile(customURL);
+        $("#container").delegate('a', 'click', function () {
+            var eclass = $(this).attr('class');
+
+            if (eclass == "Download") {
+                var uniquename = $(this).attr('uname');
+                //alert(uniquename);
+                var customURL = "http://localhost:14125/api/FileData/DownloadFile?uniqueName=" + uniquename;
+                DownloadFile(customURL);
+            }
+            else {
+                var uniquename = $(this).attr('uname');
+                //alert(uniquename);
+                if (confirm("Are you sure to delete file?")) {
+                    var customURL = "http://localhost:14125/api/FileData/DeleteFile?uniqueName=" + uniquename;
+                    DeleteFile(customURL);
+                }
+            }
         });
 
     });   
@@ -189,8 +199,10 @@ function GetAllFiles()
                     fileInfo += "<td><a href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Download'>Download</a></td>";
                    // fileInfo +=
                     //    "<td><a href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Delete'></a></td>";
-                    fileInfo += "<td><img src='http://localhost:14125/api/FileData/GetThumbnail?uniqueName="+JSONObject[key]["UniqueName"]+"' style='width:10%; height:3%'></img></td>";
+                    fileInfo += "<td><img src='http://localhost:14125/api/FileData/GetThumbnail?uniqueName="+JSONObject[key]["UniqueName"]+"' style='width:8; height:6'></img></td>";
+                    fileInfo += "<td><a href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Delete'>Delete</a></td>";
                     fileInfo += "</tr>";
+
                 }
             }
             // Replace table’s tbody html with fileInfo
@@ -214,10 +226,8 @@ function CreateFolder(customURL) {
     });
 }
 // Deleting a folder using folder id
-function DeleteFolder(folderid)
+function DeleteFolder(customURL)
 {
-    var customURL = "http://localhost:14125/api/Folder/RemoveFolder?fid=" + folderid;
-
     $.ajax({
         dataType: 'json',
         type: "GET",
@@ -279,9 +289,27 @@ function UploadFile(customURL) {
 function DownloadFile(customURL) {
     window.open(customURL);
 }
+// Downloading file
+function DeleteFile(customURL) {
+    // window.open(customURL);
+    $.ajax({
+        dataType: 'json',
+        type: "GET",
+        url: customURL,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            alert("File Deleted");
 
+            CreateFileTable();
+            GetAllFiles();
+        }
+    });
+}
 // Creating dynamic table
 function CreateFileTable() {
+    $('#container').removeClass('cols');
+    $("#container").empty();
     var $table = $('<table class="table table-borderd table-responsive" id="fileInfoTable">');
     $table.append('<thead>').children('thead')
         .append('<tr />').children('tr')

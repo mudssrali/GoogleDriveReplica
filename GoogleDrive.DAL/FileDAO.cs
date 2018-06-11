@@ -102,6 +102,14 @@ namespace GoogleDrive.DAL
                 return helper.ExecuteQuery(query);
             }
         }
+        public static Int32 DeleteFile(string uniqueName)
+        {
+            var query = $"UPDATE dbo.Files SET isActive=0 WHERE UniqueName='{uniqueName}'";
+            using (var helper = new DBHelper())
+            {
+                return helper.ExecuteQuery(query);
+            }
+        }
         public static Int32 RenameFile(string fname, int fid)
         {
             var query = $"UPDATE dbo.Files SET Name='{fname}' WHERE ID='{fid}'";

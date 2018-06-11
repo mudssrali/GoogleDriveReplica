@@ -224,6 +224,11 @@ namespace GoogleDriveAPI.Controllers
                 return response;
             }
         }
+        [HttpGet]
+        public Object DeleteFile(string uniqueName)
+        {
+            return FileBO.DeleteFile(uniqueName);
+        }
 
     }
 }

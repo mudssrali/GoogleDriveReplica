@@ -29,6 +29,10 @@ namespace GoogleDrive.BAL
         {
             return GoogleDrive.DAL.FileDAO.DeleteFile(fid);
         }
+        public static System.Int32 DeleteFile(string uniqueName)
+        {
+            return GoogleDrive.DAL.FileDAO.DeleteFile(uniqueName);
+        }
         public static System.Int32 RenameFile(string fname, int fid)
         {
             return GoogleDrive.DAL.FileDAO.RenameFile(fname, fid);

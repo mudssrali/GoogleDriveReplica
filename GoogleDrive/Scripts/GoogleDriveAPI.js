@@ -81,7 +81,7 @@
             e.preventDefault();
             var foldername = $("#myform input[type=text]").val(); 
             var customURL = '';
-
+            var pfid = parentfid;
             // display:none
             $("#myform").hide(50);
 
@@ -107,6 +107,7 @@
                 else if ($(this).hasClass('create-folder') && fid > 0) {
                     //alert('Name: ' + foldername + "Parent id = " + fid);
                     //alert(foldername + fid);
+                   // alert(fid);
                     customURL = "http://localhost:14125/api/Folder/CreateFolder?foldername=" + foldername+"&parentid="+fid;
                     CreateChildFolder(customURL,fid);
                     //removing class name for integrity
@@ -117,7 +118,7 @@
                 else if ($(this).hasClass('rename-folder')&& fid>0) {
                     customURL = "http://localhost:14125/api/Folder/RenameFolder?foldername=" + foldername + "&fid=" + fid;
 
-                    RenameFolder(customURL, IS_CHILD_FOLDER_ACTIVE, parentfid);
+                    RenameFolder(customURL, IS_CHILD_FOLDER_ACTIVE, pfid);
 
                    // removing class name for integrity
                    $(this).removeClass('rename-folder');
@@ -209,6 +210,29 @@
             // Openning url
             window.open(customURL);
         });
+
+        // DIRECTORY PATH HANDLER
+        $("#breadcrumbs").delegate('button', 'click', function (e) {
+
+            //var folderid = $(".path").attr('id');
+            //alert($(this).attr('id'));
+            e.preventDefault();
+            var folderid = $(this).attr('id');
+            var foldername = $(this).text();
+
+            // Creating visited directory path
+            //CreatePath(fname, fid);
+            // Loading Child folders
+            IS_CHILD_FOLDER_ACTIVE = GetAllChildFolder(folderid);
+
+            // For File Info Table
+            CreateFileTable();
+            GetAllFiles(folderid);
+            // removing path
+
+            $(this).nextAll('button, i').remove();
+        });
+
 
     });   
 });
@@ -499,15 +523,25 @@ function CreatePath(foldername,folderid) {
     angle.addClass("fa fa-angle-right");
     angle.appendTo("#breadcrumbs");
     // Creating span
+    var button = $("<button>");
+    button.text(foldername);
+    button.attr('id', folderid);
+    button.addClass("path");
+    button.attr('style', 'border: none; padding: 0; background: none');
+    button.appendTo("#breadcrumbs");
+    //Creating button
+    /*
     var span = $("<span>");
     span.text(foldername);
     span.attr('id', "sp" + foldername);
-    span.addClass("");
+    span.addClass("path");
     span.appendTo("#breadcrumbs");
+
     //Wrapping span arround button
     $("#sp" + foldername).wrap($('<button>', {
         id: folderid,
         style: 'border: none; padding: 0; background: none',
         class: 'flink',
     }));
+    */
 }

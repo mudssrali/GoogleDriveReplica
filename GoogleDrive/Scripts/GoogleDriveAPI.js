@@ -150,7 +150,7 @@
             //alert("deletion method")
             if (confirm("Are you sure to delete '" + fname+ "' ?")) {
                 var customURL = "http://localhost:14125/api/Folder/RemoveFolder?fid=" + fid;
-                DeleteFolder(customURL, IS_CHILD_FOLDER_ACTIVE);
+                DeleteFolder(customURL, IS_CHILD_FOLDER_ACTIVE, parentfid);
             }
             else {
                 $('#btnRenameFolder').hide();
@@ -375,7 +375,7 @@ function CreateChildFolder(customURL,folderid) {
 }
 
 // Deleting a folder using folder id
-function DeleteFolder(customURL)
+function DeleteFolder(customURL,flag,parentid)
 {
     $.ajax({
         dataType: 'json',
@@ -385,10 +385,22 @@ function DeleteFolder(customURL)
         processData: false,
         success: function (response) {
             alert("Folder Deleted");
-            $('#btnRenameFolder').hide();
-            $('#btnDeleteFolder').hide();
-            $("#container").empty();
-            GetAllFolder();
+            if (flag == false) {
+                $("#container").empty();
+                $('#btnRenameFolder').hide();
+                $('#btnDeleteFolder').hide();
+                GetAllFolder();
+            }
+            else if (flag == true) {
+                $("#containerchild").empty();
+                $('#btnRenameFolder').hide();
+                $('#btnDeleteFolder').hide();
+
+                $('#btnUploadFile').show();
+                $('#btnDownloadMetadataFile').show();
+      
+                GetAllChildFolder(parentid);
+            }
         }
     });
 }
@@ -419,8 +431,7 @@ function RenameFolder(customURL, flag,parentid) {
                 $('#btnDownloadMetadataFile').show();
 
                 GetAllChildFolder(parentid);
-               // CreateFileTable();
-               // GetAllFiles();
+              
             }
         }
     });

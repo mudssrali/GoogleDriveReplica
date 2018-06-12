@@ -23,13 +23,30 @@ namespace GoogleDrive.DAL
         }
         public static List<FolderDTO> GetAllFolderInfo()
         {
-            var query = "SELECT * FROM dbo.Folder WHERE IsActive=1";
+            var query = "SELECT * FROM dbo.Folder WHERE IsActive=1 AND parentFolderID=0";
             using (var helper = new DBHelper())
             {
                 var reader = helper.ExecuteReader(query);
 
                 List<FolderDTO> list = new List<FolderDTO>();
                 while(reader.Read())
+                {
+                    FolderDTO dto = new FolderDTO();
+                    dto = FillDTO(reader);
+                    list.Add(dto);
+                }
+                return list;
+            }
+        }
+        public static List<FolderDTO> GetAllFolderInfo(int pid)
+        {
+            var query = $"SELECT * FROM dbo.Folder WHERE IsActive=1 AND parentFolderID='{pid}'";
+            using (var helper = new DBHelper())
+            {
+                var reader = helper.ExecuteReader(query);
+
+                List<FolderDTO> list = new List<FolderDTO>();
+                while (reader.Read())
                 {
                     FolderDTO dto = new FolderDTO();
                     dto = FillDTO(reader);

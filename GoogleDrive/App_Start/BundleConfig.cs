@@ -26,10 +26,10 @@ namespace GoogleDrive
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
+                      "~/Content/loginformat.css",
                       "~/Content/frontend.css",
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
-                      "~/Content/loginformat.css",
                       "~/Content/GoogleDriveAPI.css",
                       "~/Content/file-upload.css"));
         }

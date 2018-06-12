@@ -13,6 +13,10 @@ namespace GoogleDrive.BAL
         {
             return GoogleDrive.DAL.FolderDAO.GetAllFolderInfo();
         }
+        public static List<FolderDTO> GetAllFolderInfo(int parentid)
+        {
+            return GoogleDrive.DAL.FolderDAO.GetAllFolderInfo(parentid);
+        }
         public static System.Int32 SaveFolderInfo(FolderDTO dto)
         {
             return GoogleDrive.DAL.FolderDAO.SaveFolderInfo(dto);

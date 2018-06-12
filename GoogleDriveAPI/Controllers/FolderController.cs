@@ -26,13 +26,14 @@ namespace GoogleDriveAPI.Controllers
             {
                 dto.ID = ID;
             }
-            return "newfolder";
+            return "New folder";
         }
-        public String CreateFolder(string foldername, int pfid)
+        [HttpGet]
+        public String CreateFolder(string foldername, int parentid)
         {
             var dto = new FolderDTO();
             dto.Name = foldername;
-            dto.ParentFolderID = pfid;
+            dto.ParentFolderID = parentid;
             dto.CreatedOn = DateTime.Now;
             dto.IsActive = true;
             int ID = FolderBO.SaveFolderInfo(dto);
@@ -40,12 +41,17 @@ namespace GoogleDriveAPI.Controllers
             {
                 dto.ID = ID;
             }
-            return "New folder created";
+            return "New child folder created";
         }
         [HttpGet]
         public List<FolderDTO> GetAllFolder()
         {
             return FolderBO.GetAllFolderInfo();
+        }
+        [HttpGet]
+        public List<FolderDTO> GetAllFolder(int parentid)
+        {
+            return FolderBO.GetAllFolderInfo(parentid);
         }
         [HttpGet]
         public String RemoveFolder(int fid)

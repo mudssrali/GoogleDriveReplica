@@ -230,6 +230,11 @@ namespace GoogleDriveAPI.Controllers
         {
             return FileBO.DeleteFile(uniqueName);
         }
+        [HttpGet]
+        public List<FileDTO> GetSearchResult(string searchable)
+        {
+            return GoogleDrive.BAL.FileBO.GetAllFileInfo(searchable);
+        }
 
     }
 }

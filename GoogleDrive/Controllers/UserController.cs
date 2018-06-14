@@ -25,6 +25,7 @@ namespace GoogleDrive.Controllers
                 if (obj != null)
                 {
                     Session["user"] = obj;
+                    Session["userid"] = obj.UserID;
                     return Redirect("~/home/user");
                 }
             }

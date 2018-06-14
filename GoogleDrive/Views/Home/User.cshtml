@@ -3,10 +3,10 @@
     Layout = "~/Views/Shared/_HomeLayout.cshtml";
     ViewBag.Title = "Home";
 }
-
-<div id="panel">
-    <div class="container">
-        <ul class="list-inline"> 
+<input type="hidden" id="userID" value='@Session["userid"]'>
+<div id="panel" class="operation-panel">
+    <div class="override-container">
+        <ul class="list-inline">
             <li><button id="btnCreateFolder" class="btn btn-primary">Create Folder</button></li>
             <li><button id="btnRenameFolder" class="btn btn-primary" style="display:none">Rename Folder</button></li>
             <li><button id="btnDeleteFolder" class="btn btn-primary" style="display:none">Delete Folder</button></li>
@@ -14,9 +14,8 @@
             <li><button id="btnUploadFile" class="btn btn-primary" style="display:none">Upload File</button></li>
         </ul>
     </div>
-    <br>
     <!-- Create/Rename Dialog Box-->
-    <div class="dialog" id="myform">
+    <div class="dialog" id="createFolderForm">
         <form>
             <label id="popup-title" style="color:black">New Folder</label>
             <span style="float:right">
@@ -42,20 +41,20 @@
                 <input type="file" id="uploadFileName" class="form-control">
             </div>
             <div align="center">
-                <button class="btn btn-primary"  id="btnUploadOK"> Upload File</button>
+                <button class="btn btn-primary" id="btnUploadOK"> Upload File</button>
             </div>
         </form>
     </div>
 </div>
 <div class="jeg_breadcrumbs">
-    <div class="container jeg_breadcrumb_category jeg_breadcrumb_container">
+    <div class="override-container jeg_breadcrumb_category jeg_breadcrumb_container">
         <div id="breadcrumbs">
+            <span></span>
             <span class="">
-                <a href="user">Home</a>
+                <b><a href="user" style="margin-left: 0.6em">Home</a></b>
             </span>
-           <!-- <i class="fa fa-angle-right"></i>-->
-
         </div>
+        <hr>
     </div>
 </div>
 <div id="containerchild" class="cols box">
@@ -64,3 +63,8 @@
 <div id="container" class="cols box">
 
 </div>
+<div id="containersearch" class="cols box">
+
+</div>
+
+

@@ -1,20 +1,26 @@
 ﻿@{
     ViewBag.Title = "Login";
 }
-<table align="center" style="margin:75px 0px 0px 475px">
+<table align="center" style="margin:100px 0px 0px 475px">
     <tr>
         <td>
             <div style="margin:-40px 0px; position:center">
-                <h1 style="color:white; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">My XStorage Drive </h1>
+                <h1 style="color:white; font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">XS-Drive </h1>
             </div>
             <div class="login-page">
                 <div class="form">
                     <form class="login-form" method="POST" action="@Url.Content("~/user/login")">
-                        <h3><b>User Login</b></h3>
-                        <input required type="text" name="login" id="login" placeholder="username" value="@ViewBag.Login" />
-                        <input required type="password" name="password" id="password" placeholder="password" />
-                        <input style="background:green;cursor:progress;" name="btnlogin" id="btnlogin" type="submit" value="Login" onclick="validateUser()">
-                        <p style="color:red; id="error">@ViewBag.MSG</p>
+                        <h3>User Login</h3><br/>
+                        <div class="form-group">
+                            <input required type="text" class="form-control" name="login" id="login" placeholder="username" value="@ViewBag.Login" />
+                        </div>
+                        <div class="form-group">
+                            <input required type="password" class="form-control" name="password" id="password" placeholder="password" />
+                        </div>
+                        <div class="form-group">
+                            <button style="background:green;cursor:progress;" class="btn btn-primary" name="btnlogin" id="btnlogin" value="Login" onclick="validateUser()">Login</button>
+                        </div>
+                        <p style="color:red"; id="error">@ViewBag.MSG</p>
                        
                     </form>
                 </div>

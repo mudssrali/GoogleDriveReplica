@@ -29,8 +29,8 @@
 #container {
     width: 100%;
     max-width: 900px;
-    max-height: 1200px;
-    margin: 2em auto;
+    max-height: 1202px;
+    margin: 1.9em auto;
     overflow-y: auto;
 }
 
@@ -41,14 +41,29 @@
     margin: 2em auto;
     overflow-y: auto;
 }
+#containersearch {
+    width: 100%;
+    max-width: 900px;
+    max-height: 500px;
+    margin: 2em auto;
+    overflow-y: auto;
+}
 
 .cols {
     column-count: 4;
-    column-gap: 10%;
+    column-gap: 9%;
 }
 .box {
     margin-left: 10px;
     margin-top: 20px;
     margin-bottom: 20px;
     margin-right: 10;
+}
+.override-pull-right {
+
+    float:right !important;
+}
+.override-container {
+    height:55px;
+    max-width:1347px !important;
 }

@@ -70,6 +70,23 @@ namespace GoogleDrive.DAL
                 return list;
             }
         }
+        public static List<FileDTO> GetAllFileInfo(string searchable)
+        {
+            var query = $"SELECT * FROM dbo.Files WHERE IsActive=1 AND Name LIKE '%{searchable}%'";
+            using (var helper = new DBHelper())
+            {
+                var reader = helper.ExecuteReader(query);
+
+                List<FileDTO> list = new List<FileDTO>();
+                while (reader.Read())
+                {
+                    FileDTO dto = new FileDTO();
+                    dto = FillDTO(reader);
+                    list.Add(dto);
+                }
+                return list;
+            }
+        }
         private static FileDTO FillDTO(SqlDataReader reader)
         {
             var dto = new FileDTO();

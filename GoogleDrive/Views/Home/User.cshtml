@@ -7,11 +7,11 @@
 <div id="panel" class="operation-panel">
     <div class="override-container">
         <ul class="list-inline">
-            <li><button id="btnCreateFolder" class="btn btn-primary">Create Folder</button></li>
-            <li><button id="btnRenameFolder" class="btn btn-primary" style="display:none">Rename Folder</button></li>
-            <li><button id="btnDeleteFolder" class="btn btn-primary" style="display:none">Delete Folder</button></li>
-            <li><button id="btnDownloadMetadataFile" class="btn btn-primary" style="display:none">Download Metadata As PDF</button></li>
-            <li><button id="btnUploadFile" class="btn btn-primary" style="display:none">Upload File</button></li>
+            <li><button data-toggle="tooltip" title="New folder" id="btnCreateFolder" class="btn btn-primary">Create Folder</button></li>
+            <li><button data-toggle="tooltip" title="Rename selected folder" id="btnRenameFolder" class="btn btn-primary" style="display:none">Rename Folder</button></li>
+            <li><button data-toggle="tooltip" title="Delete selected folder" id="btnDeleteFolder" class="btn btn-primary" style="display:none">Delete Folder</button></li>
+            <li><button data-toggle="tooltip" title="Current directory metadata" id="btnDownloadMetadataFile" class="btn btn-primary" style="display:none">Download Metadata As PDF</button></li>
+            <li><button data-toggle="tooltip" title="Select new file" id="btnUploadFile" class="btn btn-primary" style="display:none">Upload File</button></li>
         </ul>
     </div>
     <!-- Create/Rename Dialog Box-->
@@ -19,13 +19,16 @@
         <form>
             <label id="popup-title" style="color:black">New Folder</label>
             <span style="float:right">
-                <button id="btnCloseCreateDialog" class="btn btn-sm">X</button>
+                <button data-toggle="tooltip" title="Close" id="btnCloseCreateDialog" class="override-btn override-btn-xs">x</button>
             </span>
+            <br>
+            <br>
             <div class="form-group">
                 <input type="text" id="foldername" class="form-control">
             </div>
+            <br>
             <div align="center" class="form-group">
-                <button class="btn btn-primary" id="btnCreateOK">Create Folder</button>
+                <button class="btn btn-primary btn-lg" id="btnCreateOK">Create Folder</button>
             </div>
         </form>
     </div>
@@ -34,14 +37,16 @@
         <form>
             <label id="titleUploadPopup" style="color:black">Upload File</label>
             <span style="float:right">
-                <button id="btnCloseUploadDialog" class="btn btn-group">X</button>
+                <button data-toggle="tooltip" title="Close" id="btnCloseUploadDialog" class="override-btn override-btn-xs">x</button>
             </span>
+            <br>
             <br>
             <div class="form-group">
                 <input type="file" id="uploadFileName" class="form-control">
             </div>
+            <br>
             <div align="center">
-                <button class="btn btn-primary" id="btnUploadOK"> Upload File</button>
+                <button class="btn btn-primary btn-lg" id="btnUploadOK"> Upload File</button>
             </div>
         </form>
     </div>
@@ -49,10 +54,7 @@
 <div class="jeg_breadcrumbs">
     <div class="override-container jeg_breadcrumb_category jeg_breadcrumb_container">
         <div id="breadcrumbs">
-            <span></span>
-            <span class="">
-                <b><a href="user" style="margin-left: 0.6em">Home</a></b>
-            </span>
+               <a href="user" style="margin-left: 0.6em" data-toggle="tooltip" title="Back to home">Home</a>
         </div>
         <hr>
     </div>

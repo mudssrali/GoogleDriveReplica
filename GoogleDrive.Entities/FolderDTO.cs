@@ -9,5 +9,6 @@ namespace GoogleDrive.Entities
         public System.Int32 Size { get; set; }
         public System.DateTime CreatedOn { get; set; }
         public System.Boolean IsActive { get; set; }
+        public System.Int32 OwnerID { get; set; }
     }
 }

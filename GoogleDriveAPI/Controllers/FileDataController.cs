@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web;
@@ -18,7 +19,7 @@ namespace GoogleDriveAPI.Controllers
     public class FileDataController : ApiController
     {
         [HttpPost]
-        public int UploadFile(int parentid)
+        public int UploadFile(int parentid,int ownerid)
         {
             var dto = new FileDTO();
             int rev = 0;
@@ -74,7 +75,7 @@ namespace GoogleDriveAPI.Controllers
                             file.SaveAs(fileSavePath);
 
                             // Save File Meta data in Database
-                            rev = FileBO.SaveFileInfo(dto);
+                            rev = FileBO.SaveFileInfo(dto,ownerid);
                         }
                     }
                 }
@@ -165,10 +166,12 @@ namespace GoogleDriveAPI.Controllers
             }
         }
         [HttpGet]
-        public Object GenerateMetadata(int folderid)
+        public Object GenerateMetadata(int folderid,int ownerid)
         {
 
-            var FolderDTO = FolderBO.GetFolderInfoByID(folderid);
+            var ParentFolderDTO = FolderBO.GetFolderInfoByID(folderid);
+            var ChildFolderDTO = FolderBO.GetAllFolderInfo(folderid,ownerid);
+
             var FileDTO = FileBO.GetAllFileInfo(folderid);
 
 
@@ -184,24 +187,43 @@ namespace GoogleDriveAPI.Controllers
             var pdf = new PdfDocument(writer);
             var document = new Document(pdf);
 
-            document.Add(new Paragraph("Name: " + FolderDTO.Name));
+            document.Add(new Paragraph("Name: " + ParentFolderDTO.Name));
             document.Add(new Paragraph("Type: Folder"));
-            document.Add(new Paragraph("Size:  KB"));
-            if(FolderDTO.ParentFolderID==0)
+            document.Add(new Paragraph("Size: NILL"));
+            if(ParentFolderDTO.ParentFolderID==0)
             document.Add(new Paragraph("Parent: ROOT"));
             else
-            document.Add(new Paragraph("Parent: "+FolderDTO.ParentFolderID));
+            document.Add(new Paragraph("Parent: "+FolderBO.GetParentName(ParentFolderDTO.ParentFolderID)));
             document.Add(new Paragraph(Environment.NewLine));
 
-            foreach (var item in FileDTO)
-            { 
-                document.Add(new Paragraph("Name: "+item.Name));
-                document.Add(new Paragraph("Type: " +item.FileType));
-                document.Add(new Paragraph("Size: " + (item.Size)+ " KB"));
-                document.Add(new Paragraph("Parent: "+FolderDTO.Name));
+            //Child Folders info
+            if (ChildFolderDTO.Any(item => item.ID != 0))
+            {
+                document.Add(new Paragraph(" ******* Sub Directories Information ******"));
                 document.Add(new Paragraph(Environment.NewLine));
+                foreach (var item in ChildFolderDTO)
+                {
+                    document.Add(new Paragraph("Name: " + item.Name));
+                    document.Add(new Paragraph("Type: Folder"));
+                    document.Add(new Paragraph("Size: NILL"));
+                    document.Add(new Paragraph("Parent: " + ParentFolderDTO.Name));
+                    document.Add(new Paragraph(Environment.NewLine));
+                }
             }
-            
+            if (FileDTO.Any(item => item.ID != 0))
+            {
+                // Files information
+                document.Add(new Paragraph("******* File Information ********"));
+                document.Add(new Paragraph(Environment.NewLine));
+                foreach (var item in FileDTO)
+                {
+                    document.Add(new Paragraph("Name: " + item.Name));
+                    document.Add(new Paragraph("Type: " + item.FileType));
+                    document.Add(new Paragraph("Size: " + (item.Size) + " KB"));
+                    document.Add(new Paragraph("Parent: " + ParentFolderDTO.Name));
+                    document.Add(new Paragraph(Environment.NewLine));
+                }
+            }
             document.Close();
 
            
@@ -231,9 +253,9 @@ namespace GoogleDriveAPI.Controllers
             return FileBO.DeleteFile(uniqueName);
         }
         [HttpGet]
-        public List<FileDTO> GetSearchResult(string searchable)
+        public List<FileDTO> GetSearchResult(string searchable, int ownerid)
         {
-            return GoogleDrive.BAL.FileBO.GetAllFileInfo(searchable);
+            return GoogleDrive.BAL.FileBO.GetAllFileInfo(searchable,ownerid);
         }
 
     }

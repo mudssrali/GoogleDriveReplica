@@ -67,3 +67,60 @@
     height:55px;
     max-width:1347px !important;
 }
+.override-btn-xs {
+    padding-top: 0px;
+    padding-right: 2px;
+    padding-bottom: 0px;
+    padding-left: 2px;
+}
+.override-btn {
+    background-color:red;
+    color:white;
+    display: inline-block;
+    padding: 2px 4px;
+    margin-bottom: 0;
+    font-size: 10px;
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+    .override-btn:focus {
+        outline: thin dotted #333;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+    }
+
+    .override-btn:hover,
+    .override-btn:focus {
+        color: #333333;
+        text-decoration: none;
+    }
+
+    .override-btn:active,
+    .override-btn.active {
+        background-image: none;
+        outline: 0;
+        -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    }
+
+    .override-btn.disabled,
+    .override-btn[disabled],
+    fieldset[disabled] .override-btn {
+        pointer-events: none;
+        cursor: not-allowed;
+        opacity: 0.65;
+        filter: alpha(opacity=65);
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }

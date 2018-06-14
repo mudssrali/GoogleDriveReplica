@@ -9,18 +9,23 @@ namespace GoogleDrive.BAL
         {
             return GoogleDrive.DAL.FolderDAO.GetFolderInfoByID(id);
         }
-        public static List<FolderDTO> GetAllFolderInfo()
+        public static List<FolderDTO> GetAllFolderInfo(int ownerid)
         {
-            return GoogleDrive.DAL.FolderDAO.GetAllFolderInfo();
+            return GoogleDrive.DAL.FolderDAO.GetAllFolderInfo(ownerid);
         }
-        public static List<FolderDTO> GetAllFolderInfo(int parentid)
+        public static List<FolderDTO> GetAllFolderInfo(int parentid, int ownerid)
         {
-            return GoogleDrive.DAL.FolderDAO.GetAllFolderInfo(parentid);
+            return GoogleDrive.DAL.FolderDAO.GetAllFolderInfo(parentid, ownerid);
         }
         public static System.Int32 SaveFolderInfo(FolderDTO dto)
         {
             return GoogleDrive.DAL.FolderDAO.SaveFolderInfo(dto);
         }
+        public static System.String GetParentName(int fid)
+        {
+            return GoogleDrive.DAL.FolderDAO.GetParentName(fid);
+        }
+
         public static System.Int32 DeleteFolder(int fid)
         {
             return GoogleDrive.DAL.FolderDAO.DeleteFolder(fid);

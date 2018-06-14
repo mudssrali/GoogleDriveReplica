@@ -14,13 +14,14 @@ namespace GoogleDriveAPI.Controllers
             return "Pakistan";
         }
         [HttpGet]
-        public String CreateFolder(string foldername)
+        public String CreateFolder(string foldername, int ownerid)
         {
             var dto = new FolderDTO();
             dto.Name = foldername;
             dto.ParentFolderID = 0;
             dto.CreatedOn = DateTime.Now;
             dto.IsActive = true;
+            dto.OwnerID = ownerid;
             int ID = FolderBO.SaveFolderInfo(dto);
             if (ID > 0)
             {
@@ -29,7 +30,7 @@ namespace GoogleDriveAPI.Controllers
             return "New folder";
         }
         [HttpGet]
-        public String CreateFolder(string foldername, int parentid)
+        public String CreateFolder(string foldername, int parentid,int ownerid)
         {
             var dto = new FolderDTO();
             dto.Name = foldername;
@@ -44,14 +45,14 @@ namespace GoogleDriveAPI.Controllers
             return "New child folder created";
         }
         [HttpGet]
-        public List<FolderDTO> GetAllFolder()
+        public List<FolderDTO> GetAllFolder(int ownerid)
         {
-            return FolderBO.GetAllFolderInfo();
+            return FolderBO.GetAllFolderInfo(ownerid);
         }
         [HttpGet]
-        public List<FolderDTO> GetAllFolder(int parentid)
+        public List<FolderDTO> GetAllFolder(int parentid,int ownerid)
         {
-            return FolderBO.GetAllFolderInfo(parentid);
+            return FolderBO.GetAllFolderInfo(parentid,ownerid);
         }
         [HttpGet]
         public String RemoveFolder(int fid)

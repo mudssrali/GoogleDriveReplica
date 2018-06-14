@@ -21,14 +21,14 @@ namespace GoogleDrive.BAL
         {
             return GoogleDrive.DAL.FileDAO.GetAllFileInfo(fid);
         }
-        public static List<FileDTO> GetAllFileInfo(string searchable)
+        public static List<FileDTO> GetAllFileInfo(string searchable, int ownerid)
         {
-            return GoogleDrive.DAL.FileDAO.GetAllFileInfo(searchable);
+            return GoogleDrive.DAL.FileDAO.GetAllFileInfo(searchable, ownerid);
         }
 
-        public static System.Int32 SaveFileInfo(FileDTO dto)
+        public static System.Int32 SaveFileInfo(FileDTO dto,int ownerid)
         {
-            return GoogleDrive.DAL.FileDAO.SaveFileInfo(dto);
+            return GoogleDrive.DAL.FileDAO.SaveFileInfo(dto,ownerid);
         }
         public static System.Int32 DeleteFile(int fid)
         {

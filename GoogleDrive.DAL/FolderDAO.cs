@@ -21,9 +21,9 @@ namespace GoogleDrive.DAL
                 return dto;
             }
         }
-        public static List<FolderDTO> GetAllFolderInfo()
+        public static List<FolderDTO> GetAllFolderInfo(int ownerid)
         {
-            var query = "SELECT * FROM dbo.Folder WHERE IsActive=1 AND parentFolderID=0";
+            var query = $"SELECT * FROM dbo.Folder WHERE IsActive=1 AND parentFolderID=0 AND OwnerID='{ownerid}'";
             using (var helper = new DBHelper())
             {
                 var reader = helper.ExecuteReader(query);
@@ -38,7 +38,7 @@ namespace GoogleDrive.DAL
                 return list;
             }
         }
-        public static List<FolderDTO> GetAllFolderInfo(int pid)
+        public static List<FolderDTO> GetAllFolderInfo(int pid, int ownerid)
         {
             var query = $"SELECT * FROM dbo.Folder WHERE IsActive=1 AND parentFolderID='{pid}'";
             using (var helper = new DBHelper())
@@ -67,8 +67,8 @@ namespace GoogleDrive.DAL
         }
         public static Int32 SaveFolderInfo(FolderDTO dto)
         {
-            var query = $"INSERT dbo.Folder(Name, ParentFolderID,CreatedOn,IsActive) " +
-                $"OUTPUT INSERTED.ID VALUES('{dto.Name}','{dto.ParentFolderID}','{dto.CreatedOn}','{dto.IsActive}')";
+            var query = $"INSERT dbo.Folder(Name, ParentFolderID,CreatedOn,IsActive,OwnerID) " +
+                $"OUTPUT INSERTED.ID VALUES('{dto.Name}','{dto.ParentFolderID}','{dto.CreatedOn}','{dto.IsActive}', '{dto.OwnerID}')";
             using (var helper = new DBHelper())
             {
                 return (int)helper.ExecuteScalar(query);
@@ -96,6 +96,20 @@ namespace GoogleDrive.DAL
             using (var helper = new DBHelper())
             {
                 return (int)helper.ExecuteScalar(query);
+            }
+        }
+        public static String GetParentName(int fid)
+        {
+            var query = $"SELECT * FROM dbo.Folder WHERE ID='{fid}'";
+            using (var helper = new DBHelper())
+            {
+                var reader = helper.ExecuteReader(query);
+                FolderDTO dto = null;
+                if (reader.Read())
+                {
+                    dto = FillDTO(reader);
+                }
+                return dto.Name;
             }
         }
 

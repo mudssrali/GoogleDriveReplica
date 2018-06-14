@@ -70,9 +70,9 @@ namespace GoogleDrive.DAL
                 return list;
             }
         }
-        public static List<FileDTO> GetAllFileInfo(string searchable)
+        public static List<FileDTO> GetAllFileInfo(string searchable, int ownerid)
         {
-            var query = $"SELECT * FROM dbo.Files WHERE IsActive=1 AND Name LIKE '%{searchable}%'";
+            var query = $"SELECT * FROM dbo.Files WHERE IsActive=1 AND Name LIKE '%{searchable}%' AND OwnerID='{ownerid}'";
             using (var helper = new DBHelper())
             {
                 var reader = helper.ExecuteReader(query);
@@ -101,11 +101,11 @@ namespace GoogleDrive.DAL
             dto.IsActive = reader.GetBoolean(8);
             return dto;
         }
-        public static Int32 SaveFileInfo(FileDTO dto)
+        public static Int32 SaveFileInfo(FileDTO dto, int ownerid)
         {
-            var query = $"INSERT dbo.Files(Name,UniqueName, ParentFolderID,FileExt,FileSizeInKB,UploadOn,FileType,IsActive) " +
+            var query = $"INSERT dbo.Files(Name,UniqueName, ParentFolderID,FileExt,FileSizeInKB,UploadOn,FileType,IsActive,Ownerid) " +
                 $"OUTPUT INSERTED.ID VALUES('{dto.Name}','{dto.UniqueName}','{dto.ParentFolderID}','{dto.Extension}'," +
-                $"'{dto.Size}','{dto.UploadOn}','{dto.FileType}','{dto.IsActive}')";
+                $"'{dto.Size}','{dto.UploadOn}','{dto.FileType}','{dto.IsActive}','{ownerid}')";
             using (var helper = new DBHelper())
             {
                 return (int)helper.ExecuteScalar(query);

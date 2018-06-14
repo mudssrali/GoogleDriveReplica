@@ -16,9 +16,18 @@
     $('#btnDownloadMetadataFile').hide();
     $('#fileInfoTable').hide();
 
-    //GETTING ALL FOLDER ON DOM READY
+    // Showing tooltip
+    $('[data-toggle="tooltip"]').tooltip();
+    $('#breadcrumbs').delegate('button', 'mouseover', function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    $('#container, #containerchild').delegate('button', 'mouseover', function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 
-    GetAllFolder();
+    //GETTING ALL FOLDER BY OWNER ID ON DOM READY
+
+    GetAllFolder(UserID);
 
     // FOLDER SINGLE CLICK HANDLER
     $('#container, #containerchild').delegate('button', 'click', function () {
@@ -56,7 +65,7 @@
         // Creating visited directory path
         CreatePath(fname, fid);
         // Loading Child folders
-        IS_CHILD_FOLDER_ACTIVE = GetAllChildFolder(fid);
+        IS_CHILD_FOLDER_ACTIVE = GetAllChildFolder(fid, UserID);
 
         // For File Info Table
         CreateFileTable();
@@ -81,6 +90,7 @@
             var foldername = $("#createFolderForm input[type=text]").val();
             var customURL = '';
             var pfid = parentfid;
+            var ownerid = UserID;
             // display:none
             $("#createFolderForm").hide(50);
 
@@ -97,18 +107,16 @@
                 //Creating parent folder
                 if ($(this).hasClass('create-folder') && fid == 0) {
                     //alert(foldername + fid);
-                    customURL = "http://localhost:14125/api/Folder/CreateFolder?foldername=" + foldername;
-                    CreateFolder(customURL);
+                    customURL = "http://localhost:14125/api/Folder/CreateFolder?foldername=" + foldername + "&ownerid=" + ownerid;
+                    CreateFolder(customURL, ownerid);
                     //removing class name for integrity
                     $(this).removeClass('create-folder');
                 }
                 //Creating child folder
                 else if ($(this).hasClass('create-folder') && fid > 0) {
-                    //alert('Name: ' + foldername + "Parent id = " + fid);
-                    //alert(foldername + fid);
-                    // alert(fid);
-                    customURL = "http://localhost:14125/api/Folder/CreateFolder?foldername=" + foldername + "&parentid=" + fid;
-                    CreateChildFolder(customURL, fid);
+                    //alert(ownerid);
+                    customURL = "http://localhost:14125/api/Folder/CreateFolder?foldername=" + foldername + "&parentid=" + pfid + "&ownerid=" + ownerid;
+                    CreateChildFolder(customURL,pfid,ownerid);
                     //removing class name for integrity
                     $(this).removeClass('create-folder');
                 }
@@ -117,7 +125,7 @@
                 else if ($(this).hasClass('rename-folder') && fid > 0) {
                     customURL = "http://localhost:14125/api/Folder/RenameFolder?foldername=" + foldername + "&fid=" + fid;
 
-                    RenameFolder(customURL, IS_CHILD_FOLDER_ACTIVE, pfid);
+                    RenameFolder(customURL, IS_CHILD_FOLDER_ACTIVE, pfid,ownerid);
 
                     // removing class name for integrity
                     $(this).removeClass('rename-folder');
@@ -146,10 +154,11 @@
 
         // BUTTON HANDLER FOR DELETING A FOLDER
         $("#btnDeleteFolder").click(function () {
+            var ownerid = UserID;
             //alert("deletion method")
             if (confirm("Are you sure to delete '" + fname + "' ?")) {
                 var customURL = "http://localhost:14125/api/Folder/RemoveFolder?fid=" + fid;
-                DeleteFolder(customURL, IS_CHILD_FOLDER_ACTIVE, parentfid);
+                DeleteFolder(customURL, IS_CHILD_FOLDER_ACTIVE, parentfid, ownerid);
             }
             else {
                 $('#btnRenameFolder').hide();
@@ -165,10 +174,12 @@
             $("#fileUploadForm").show(400);
         });
         $("#btnUploadOK").click(function (e) {
+            var ownerid = UserID;
             e.preventDefault();
             //alert("upload file");
             var folderid = fid;
-            var customURL = "http://localhost:14125/api/FileData/UploadFile?parentid=" + folderid;
+            var ownerid = UserID;
+            var customURL = "http://localhost:14125/api/FileData/UploadFile?parentid=" + folderid + "&ownerid=" + ownerid;
             UploadFile(customURL, fid);
             $("#fileUploadForm").hide(200);
         });
@@ -204,7 +215,7 @@
         $("#btnDownloadMetadataFile").click(function () {
 
             //alert(fid);
-            var customURL = "http://localhost:14125/api/FileData/GenerateMetadata?folderid=" + fid;
+            var customURL = "http://localhost:14125/api/FileData/GenerateMetadata?folderid=" + fid + "&ownerid=" + UserID;
             // Openning url
             window.open(customURL);
         });
@@ -221,7 +232,7 @@
             // Creating visited directory path
             //CreatePath(fname, fid);
             // Loading Child folders
-            IS_CHILD_FOLDER_ACTIVE = GetAllChildFolder(folderid);
+            IS_CHILD_FOLDER_ACTIVE = GetAllChildFolder(folderid, UserID);
 
             // For File Info Table
             CreateFileTable();
@@ -232,9 +243,20 @@
         });
         // SEARCHING FILE
         $("#btnSearchFile").click(function (e) {
-
+            var ownerid = UserID;
             e.preventDefault();          
             var search = $("#searchable").val();
+
+            $('#breadcrumbs').empty();
+
+            var link = $("<a>");
+            link.attr('href', 'user');
+            link.text('Home');
+            link.attr('title', 'Back to home');
+            link.attr('style', 'margin-left: 0.6em');
+            link.attr('data-toggle', 'tooltip');
+            link.appendTo('#breadcrumbs');
+            
 
             $('#btnRenameFolder').hide();
             $('#btnDeleteFolder').hide();
@@ -243,18 +265,18 @@
             $('#containerchild').hide();
 
             CreateFileTable(); // creating table
-            SearchFile(search); // searching file
+            SearchFile(search,ownerid); // searching file
         });
     });
 });
 // Displying all folders
-function GetAllFolder() {
+function GetAllFolder(ownerid) {
     var folderID = "";
     var folderName = "";
     $.ajax({
         dataType: 'json',
         type: "GET",
-        url: "http://localhost:14125/api/Folder/GetAllFolder",
+        url: "http://localhost:14125/api/Folder/GetAllFolder?ownerid=" + ownerid,
         contentType: false,
         processData: false,
         success: function (JSONObject) {
@@ -269,12 +291,13 @@ function GetAllFolder() {
                     img.attr('width', 64);
                     img.attr('height', 64);
                     img.attr('uname', folderName);
-
+                    img.attr('title', 'Open ' + folderName);
+                    img.attr('data-toggle', 'tooltip');
 
                     img.appendTo('#container');
 
                     // wrapping image arround button
-                    $("#ficon" + folderID).wrap($('<button>', {
+                    $("#ficon" + folderID).wrap($("<button>", {
                         id: folderID,
                         style: 'border: none; padding: 0; background: none',
                         class: 'flink',
@@ -296,6 +319,9 @@ function GetAllFolder() {
                     namedlink.text(JSONObject[key]['Name']);
                     namedlink.attr('id', folderID);
                     namedlink.attr('class', 'flink');
+                    namedlink.attr('title', 'Open ' + folderName);
+                    namedlink.attr('data-toggle', 'tooltip');
+
                     namedlink.attr('style', 'border: none; padding: 0; background: none')
                     namedlink.appendTo('#container');
                 }
@@ -304,14 +330,14 @@ function GetAllFolder() {
     });
 }
 // Displaying child folders
-function GetAllChildFolder(parentid) {
+function GetAllChildFolder(parentid,ownerid) {
     var flag = false;
     var folderID = parentid;
     var folderName = "";
     $.ajax({
         dataType: 'json',
         type: "GET",
-        url: "http://localhost:14125/api/Folder/GetAllFolder?parentid=" + parentid,
+        url: "http://localhost:14125/api/Folder/GetAllFolder?parentid=" + parentid+"&ownerid="+ownerid,
         contentType: false,
         processData: false,
         success: function (JSONObject) {
@@ -328,6 +354,8 @@ function GetAllChildFolder(parentid) {
                     img.attr('src', 'GetImage');
                     img.attr('width', 64);
                     img.attr('height', 64);
+                    img.attr('title', 'Open ' + folderName);
+                    img.attr('data-toggle', 'tooltip');
 
                     img.appendTo('#containerchild');
 
@@ -347,6 +375,8 @@ function GetAllChildFolder(parentid) {
                     namedlink.text(JSONObject[key]['Name']);
                     namedlink.attr('id', folderID);
                     namedlink.attr('class', 'flink');
+                    namedlink.attr('title', 'Open ' + folderName);
+                    namedlink.attr('data-toggle', 'tooltip');
                     namedlink.attr('style', 'border: none; padding: 0; background: none')
                     namedlink.appendTo('#containerchild');
                 }
@@ -373,9 +403,9 @@ function GetAllFiles(folderid) {
                     fileInfo += "<td>" + JSONObject[key]["Name"] + "</td>";
                     fileInfo += "<td>" + JSONObject[key]["FileType"] + "</td>";
                     fileInfo += "<td>" + JSONObject[key]["Size"] + " KB" + "</td>";
-                    fileInfo += "<td><a href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Download'>Download</a></td>";
+                    fileInfo += "<td><a data-toggle='tooltip' title='Click to download' href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Download'>Download</a></td>";
+                    fileInfo += "<td><a data-toggle='tooltip' title='Click to delete' href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Delete'>Delete</a></td>";
                     fileInfo += "<td><img src='http://localhost:14125/api/FileData/GetThumbnail?uniqueName=" + JSONObject[key]["UniqueName"] + "' style='width:8; height:6'></img></td>";
-                    fileInfo += "<td><a href='#' uname='" + JSONObject[key]["UniqueName"] + "' class='Delete'>Delete</a></td>";
                     fileInfo += "</tr>";
                 }
             }
@@ -385,7 +415,7 @@ function GetAllFiles(folderid) {
     });
 }
 // Creating a new folder 
-function CreateFolder(customURL) {
+function CreateFolder(customURL, ownerid) {
     $.ajax({
         dataType: 'json',
         type: "GET",
@@ -395,12 +425,12 @@ function CreateFolder(customURL) {
         success: function (response) {
             alert("New folder created");
             $("#container").empty();
-            GetAllFolder();
+            GetAllFolder(ownerid);
         }
     });
 }
 // Creating new child folder
-function CreateChildFolder(customURL, folderid) {
+function CreateChildFolder(customURL, folderid,ownerid) {
     $.ajax({
         dataType: 'json',
         type: "GET",
@@ -410,13 +440,13 @@ function CreateChildFolder(customURL, folderid) {
         success: function (response) {
             alert("New folder created");
             $("#containerchild").empty();
-            GetAllChildFolder(folderid);
+            GetAllChildFolder(folderid,ownerid);
         }
     });
 }
 
 // Deleting a folder using folder id
-function DeleteFolder(customURL, flag, parentid) {
+function DeleteFolder(customURL, flag, parentid,ownerid) {
     $.ajax({
         dataType: 'json',
         type: "GET",
@@ -429,7 +459,7 @@ function DeleteFolder(customURL, flag, parentid) {
                 $("#container").empty();
                 $('#btnRenameFolder').hide();
                 $('#btnDeleteFolder').hide();
-                GetAllFolder();
+                GetAllFolder(ownerid);
             }
             else if (flag == true) {
                 $("#containerchild").empty();
@@ -439,13 +469,13 @@ function DeleteFolder(customURL, flag, parentid) {
                 $('#btnUploadFile').show();
                 $('#btnDownloadMetadataFile').show();
 
-                GetAllChildFolder(parentid);
+                GetAllChildFolder(parentid, ownerid);
             }
         }
     });
 }
 // Renaming a folder using URL from #btnCreateOK
-function RenameFolder(customURL, flag, parentid) {
+function RenameFolder(customURL, flag, parentid,ownerid) {
     $.ajax({
         dataType: 'json',
         type: "GET",
@@ -460,7 +490,7 @@ function RenameFolder(customURL, flag, parentid) {
                 $("#container").empty();
                 $('#btnRenameFolder').hide();
                 $('#btnDeleteFolder').hide();
-                GetAllFolder();
+                GetAllFolder(ownerid);
             }
             else if (flag == true) {
                 $("#containerchild").empty();
@@ -470,7 +500,7 @@ function RenameFolder(customURL, flag, parentid) {
                 $('#btnUploadFile').show();
                 $('#btnDownloadMetadataFile').show();
 
-                GetAllChildFolder(parentid);
+                GetAllChildFolder(parentid, ownerid);
 
             }
         }
@@ -527,7 +557,7 @@ function CreateFileTable() {
     var $table = $('<table class="table table-borderd table-responsive" id="fileInfoTable">');
     $table.append('<thead>').children('thead')
         .append('<tr />').children('tr')
-        .append('<th>Name</th><th>Type</th><th>Size</th><th>Download</th><th>Preview</th><th>Delete</th>');
+        .append('<th>Name</th><th>Type</th><th>Size</th><th>Download</th><th>Delete</th><th>Preview</th>');
     $table.append('<tbody />').children('tbody');
     $table.appendTo("#container");
 }
@@ -542,32 +572,19 @@ function CreatePath(foldername, folderid) {
     var button = $("<button>");
     button.text(foldername);
     button.attr('id', folderid);
+    button.attr('data-toggle', 'tooltip');
+    button.attr('title', 'Open ' + foldername);
     button.addClass("path");
     button.attr('style', 'border: none; padding: 0; background: none');
     button.appendTo("#breadcrumbs");
-    //Creating button
-    /*
-    var span = $("<span>");
-    span.text(foldername);
-    span.attr('id', "sp" + foldername);
-    span.addClass("path");
-    span.appendTo("#breadcrumbs");
-
-    //Wrapping span arround button
-    $("#sp" + foldername).wrap($('<button>', {
-        id: folderid,
-        style: 'border: none; padding: 0; background: none',
-        class: 'flink',
-    }));
-    */
 }
 // Search files using name
-function SearchFile(searchable) {
+function SearchFile(searchable,ownerid) {
     var fileInfo = '';
         $.ajax({
         dataType: 'json',
             type: "GET",
-            url: "http://localhost:14125/api/FileData/GetSearchResult?searchable=" + searchable,
+            url: "http://localhost:14125/api/FileData/GetSearchResult?searchable=" + searchable + "&ownerid=" + ownerid,
         contentType: false,
         processData: false,
             success: function (JSONObject) {

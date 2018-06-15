@@ -1,13 +1,13 @@
 ﻿$(document).ready(function () {
 
-    var IS_DBLCLICK_TRIGGERED = false;
-    var IS_CHILD_FOLDER_ACTIVE = false;
+    var IsDoubleClickTriggered = false;
+    var IsChildFolderActive = false;
 
-    var fid = 0;       // folder id
-    var parentfid = 0;
-    var fname = '';     // folder name
-    var filename = '';  // file name
-    var UserID = $('#userID').val();
+    var FolderGlobalID = 0;       
+    var ParentFolderGlobalID = 0;
+    var FolderGlobalName = '';    
+    var FileGlobalName = '';  
+    var UserGlobalID = $('#userID').val();
 
     //Hiding operations delete, rename, upload, download
     $('#btnRenameFolder').hide();
@@ -16,7 +16,7 @@
     $('#btnDownloadMetadataFile').hide();
     $('#fileInfoTable').hide();
 
-    // Showing tooltip
+    // handling bootstrap tooltip
     $('[data-toggle="tooltip"]').tooltip();
     $('#breadcrumbs').delegate('button', 'mouseover', function () {
         $('[data-toggle="tooltip"]').tooltip();
@@ -27,49 +27,49 @@
 
     //GETTING ALL FOLDER BY OWNER ID ON DOM READY
 
-    GetAllFolder(UserID);
+    GetAllFolder(UserGlobalID);
 
     // FOLDER SINGLE CLICK HANDLER
     $('#container, #containerchild').delegate('button', 'click', function () {
-        if (IS_DBLCLICK_TRIGGERED == false) {
+        if (IsDoubleClickTriggered == false) {
             $('#btnRenameFolder').show(20);
             $('#btnDeleteFolder').show(20);
-            parentfid = fid;
-            fid = $(this).attr('id');
-            fname = $(this).text();
+            ParentFolderGlobalID = FolderGlobalID;
+            FolderGlobalID = $(this).attr('id');
+            FolderGlobalName = $(this).text();
         }
-        else if (IS_DBLCLICK_TRIGGERED == true) {
+        else if (IsDoubleClickTriggered == true) {
             $('#btnUploadFile').hide();
             $('#btnDownloadMetadataFile').hide();
             $('#btnRenameFolder').show(20);
             $('#btnDeleteFolder').show(20);
-            fid = $(this).attr('id');
-            fname = $(this).text();
+            FolderGlobalID = $(this).attr('id');
+            FolderGlobalName = $(this).text();
         }
     });
 
     // FOLDER DOUBLE CLICK HANDLER  
     $('#container, #containerchild').delegate('button', 'dblclick', function () {
 
-        IS_DBLCLICK_TRIGGERED = true;
+        IsDoubleClickTriggered = true;
 
         $('#btnRenameFolder').hide();
         $('#btnDeleteFolder').hide();
-        parentfid = fid;
-        fid = $(this).attr('id');
-        fname = $(this).text();
+        ParentFolderGlobalID = FolderGlobalID;
+        FolderGlobalID = $(this).attr('id');
+        FolderGlobalName = $(this).text();
 
         $('#btnUploadFile').show();
         $('#btnDownloadMetadataFile').show();
 
         // Creating visited directory path
-        CreatePath(fname, fid);
+        CreatePath(FolderGlobalName, FolderGlobalID);
         // Loading Child folders
-        IS_CHILD_FOLDER_ACTIVE = GetAllChildFolder(fid, UserID);
+        IsChildFolderActive = GetAllChildFolder(FolderGlobalID, UserGlobalID);
 
         // For File Info Table
         CreateFileTable();
-        GetAllFiles(fid);
+        GetAllFiles(FolderGlobalID);
 
     });
 
@@ -89,45 +89,35 @@
             e.preventDefault();
             var foldername = $("#createFolderForm input[type=text]").val();
             var customURL = '';
-            var pfid = parentfid;
-            var ownerid = UserID;
-            // display:none
+            var pfid = ParentFolderGlobalID;
+            var ownerid = UserGlobalID;
             $("#createFolderForm").hide(50);
-
-            /*
-            if ($(this).hasClass('create-folder')) {
-                alert('create folder');
-            }
-            if ($(this).hasClass('rename-folder')) {
-                alert('rename-folder');
-            }
-            */
 
             if (foldername.length != 0 || foldername.trim().length != 0) {
                 //Creating parent folder
-                if ($(this).hasClass('create-folder') && fid == 0) {
-                    //alert(foldername + fid);
+                if ($(this).hasClass('create-folder') && FolderGlobalID == 0) {
+                    
                     customURL = "http://localhost:14125/api/Folder/CreateFolder?foldername=" + foldername + "&ownerid=" + ownerid;
                     CreateFolder(customURL, ownerid);
-                    //removing class name for integrity
+                    
                     $(this).removeClass('create-folder');
                 }
                 //Creating child folder
-                else if ($(this).hasClass('create-folder') && fid > 0) {
-                    //alert(ownerid);
+                else if ($(this).hasClass('create-folder') && FolderGlobalID > 0) {
+                    
                     customURL = "http://localhost:14125/api/Folder/CreateFolder?foldername=" + foldername + "&parentid=" + pfid + "&ownerid=" + ownerid;
                     CreateChildFolder(customURL,pfid,ownerid);
-                    //removing class name for integrity
+                    
                     $(this).removeClass('create-folder');
                 }
-
                 //Renaming a folder
-                else if ($(this).hasClass('rename-folder') && fid > 0) {
-                    customURL = "http://localhost:14125/api/Folder/RenameFolder?foldername=" + foldername + "&fid=" + fid;
+                else if ($(this).hasClass('rename-folder') && FolderGlobalID > 0) {
+                    customURL = "http://localhost:14125/api/Folder/RenameFolder?foldername=" + foldername + "&fid=" + FolderGlobalID;
 
-                    RenameFolder(customURL, IS_CHILD_FOLDER_ACTIVE, pfid,ownerid);
+                    RenameFolder(customURL, IsChildFolderActive, pfid, ownerid);
+                    ParentFolderGlobalID = 0;
+                    FolderGlobalID = 0;
 
-                    // removing class name for integrity
                     $(this).removeClass('rename-folder');
                 }
             }
@@ -142,11 +132,11 @@
         });
         // BUTTON HANDLER FOR RENAMING A FOLDER
         $("#btnRenameFolder").click(function () {
-            // alert("rename method");
+        
             $("#createFolderForm #popup-title").text('Renaming Folder');
             $('#btnCreateOK').html('Update Folder');
             $('#btnCreateOK').addClass('rename-folder');
-            $("#createFolderForm input[type=text]").val(fname);
+            $("#createFolderForm input[type=text]").val(FolderGlobalName);
             $("#createFolderForm").show(100);
             $("#foldername").select();
 
@@ -154,16 +144,17 @@
 
         // BUTTON HANDLER FOR DELETING A FOLDER
         $("#btnDeleteFolder").click(function () {
-            var ownerid = UserID;
-            //alert("deletion method")
-            if (confirm("Are you sure to delete '" + fname + "' ?")) {
-                var customURL = "http://localhost:14125/api/Folder/RemoveFolder?fid=" + fid;
-                DeleteFolder(customURL, IS_CHILD_FOLDER_ACTIVE, parentfid, ownerid);
+            var ownerid = UserGlobalID;
+            if (confirm("Are you sure to delete '" + FolderGlobalName + "' ?")) {
+                var customURL = "http://localhost:14125/api/Folder/RemoveFolder?fid=" + FolderGlobalID;
+                DeleteFolder(customURL, IsChildFolderActive, ParentFolderGlobalID, ownerid);
+				ParentFolderGlobalID = 0;
             }
             else {
                 $('#btnRenameFolder').hide();
                 $('#btnDeleteFolder').hide();
-                fid = 0; // setting NULL Folder id to ZERO
+                FolderGlobalID = 0;
+                ParentFolderGlobalID = 0;
             }
         });
 
@@ -174,21 +165,18 @@
             $("#fileUploadForm").show(400);
         });
         $("#btnUploadOK").click(function (e) {
-            var ownerid = UserID;
             e.preventDefault();
-            //alert("upload file");
-            var folderid = fid;
-            var ownerid = UserID;
+
+            var folderid = FolderGlobalID;
+            var ownerid = UserGlobalID;
             var customURL = "http://localhost:14125/api/FileData/UploadFile?parentid=" + folderid + "&ownerid=" + ownerid;
-            UploadFile(customURL, fid);
+            UploadFile(customURL, folderid);
             $("#fileUploadForm").hide(200);
         });
         $("#btnCloseUploadDialog").click(function (e) {
             e.preventDefault();
             $("#fileUploadForm").hide(100);
         });
-
-
         // LINK HANDLER FOR DELETING FILE AND DOWNLOADING FILE
         $("#container").delegate('a', 'click', function () {
 
@@ -197,7 +185,7 @@
             var name = $(this).parent().siblings(":first").text(); // actual name of a file
             var uniquename = $(this).attr('uname');                // unique name of a file
             var fileid = $(this).closest('tr').attr('id');         // file id
-            var folderid = fid;                                    // folder id
+            var folderid = FolderGlobalID;                         
 
             if (eclass == "Download") {
                 var customURL = "http://localhost:14125/api/FileData/DownloadFile?uniqueName=" + uniquename;
@@ -207,48 +195,41 @@
                 if (confirm("Are you sure to delete file '" + name + "' ?")) {
                     var customURL = "http://localhost:14125/api/FileData/DeleteFile?uniqueName=" + uniquename;
                     DeleteFile(customURL, folderid);
+					
                 }
             }
         });
-
         // BUTTON HANDLER FOR DOWNLOADING METADATA AS PDF
         $("#btnDownloadMetadataFile").click(function () {
-
-            //alert(fid);
-            var customURL = "http://localhost:14125/api/FileData/GenerateMetadata?folderid=" + fid + "&ownerid=" + UserID;
-            // Openning url
+            var customURL = "http://localhost:14125/api/FileData/GenerateMetadata?folderid=" + FolderGlobalID + "&ownerid=" + UserGlobalID;
             window.open(customURL);
         });
-
         // DIRECTORY PATH HANDLER
         $("#breadcrumbs").delegate('button', 'click', function (e) {
-
-            //var folderid = $(".path").attr('id');
-            //alert($(this).attr('id'));
             e.preventDefault();
             var folderid = $(this).attr('id');
             var foldername = $(this).text();
 
-            // Creating visited directory path
-            //CreatePath(fname, fid);
-            // Loading Child folders
-            IS_CHILD_FOLDER_ACTIVE = GetAllChildFolder(folderid, UserID);
-
-            // For File Info Table
+            IsChildFolderActive = GetAllChildFolder(folderid, UserGlobalID);
             CreateFileTable();
             GetAllFiles(folderid);
-            // removing path
+
+            ParentFolderGlobalID = folderid;
 
             $(this).nextAll('button, i').remove();
         });
+        // Moving back to parent directory
+        $("#breadcrumbs").delegate('a', 'click', function (e) {
+            ParentFolderGlobalID = 0;
+            FolderGlobalID = 0;
+        });
         // SEARCHING FILE
         $("#btnSearchFile").click(function (e) {
-            var ownerid = UserID;
+            var ownerid = UserGlobalID;
             e.preventDefault();          
             var search = $("#searchable").val();
-
             $('#breadcrumbs').empty();
-
+       
             var link = $("<a>");
             link.attr('href', 'user');
             link.text('Home');
@@ -257,15 +238,14 @@
             link.attr('data-toggle', 'tooltip');
             link.appendTo('#breadcrumbs');
             
-
             $('#btnRenameFolder').hide();
             $('#btnDeleteFolder').hide();
             $('#btnUploadFile').hide();
             $('#btnDownloadMetadataFile').hide();
             $('#containerchild').hide();
 
-            CreateFileTable(); // creating table
-            SearchFile(search,ownerid); // searching file
+            CreateFileTable(); 
+            SearchFile(search,ownerid);
         });
     });
 });
@@ -293,7 +273,7 @@ function GetAllFolder(ownerid) {
                     img.attr('uname', folderName);
                     img.attr('title', 'Open ' + folderName);
                     img.attr('data-toggle', 'tooltip');
-
+                    // appending to div with id #container
                     img.appendTo('#container');
 
                     // wrapping image arround button
@@ -303,14 +283,6 @@ function GetAllFolder(ownerid) {
                         class: 'flink',
                     }));
 
-                    // Creating folder named link
-                    // var namedlink = $('<a>');
-                    // namedlink.text(JSONObject[key]['Name']);
-                    // namedlink.attr('href', 'foldercontent?folderID=' + folderID);
-                    // namedlink.attr('class', "flink");
-                    // namedlink.appendTo('#container');
-
-                    // Creating folder named link
                     var sp = $("<span>");
                     sp.text(" ");
                     sp.appendTo("#container");
@@ -341,7 +313,6 @@ function GetAllChildFolder(parentid,ownerid) {
         contentType: false,
         processData: false,
         success: function (JSONObject) {
-            // making empty child container
             $('#containerchild').empty();
             for (var key in JSONObject) {
                 if (JSONObject.hasOwnProperty(key)) {
@@ -388,7 +359,7 @@ function GetAllChildFolder(parentid,ownerid) {
 // Displaying all files
 function GetAllFiles(folderid) {
     var fileID = "";
-    var fileName = "";
+    var FileGlobalName = "";
     var fileInfo = "";
     $.ajax({
         dataType: 'json',
@@ -444,7 +415,6 @@ function CreateChildFolder(customURL, folderid,ownerid) {
         }
     });
 }
-
 // Deleting a folder using folder id
 function DeleteFolder(customURL, flag, parentid,ownerid) {
     $.ajax({
@@ -483,8 +453,7 @@ function RenameFolder(customURL, flag, parentid,ownerid) {
         contentType: false,
         processData: false,
         success: function (response) {
-            fid = 0;
-            fname = '';
+            FolderGlobalName = '';
             alert("Folder Name Updated");
             if (flag == false) {
                 $("#container").empty();
@@ -507,12 +476,10 @@ function RenameFolder(customURL, flag, parentid,ownerid) {
     });
 }
 // Uploading file
-function UploadFile(customURL, fid) {
+function UploadFile(customURL, folderid) {
     var data = new FormData();
-    //var pfolderid = fid;
     var file = $('#fileUploadForm input[type=file]')[0].files[0];
     data.append('file', file);
-    //data.append('pdif', pfolderid);
     $.ajax({
         url: customURL,
         processData: false,
@@ -525,7 +492,7 @@ function UploadFile(customURL, fid) {
             $('#container').removeClass('cols');
             $('#fileInfoTable').remove();
             CreateFileTable();
-            GetAllFiles(fid);
+            GetAllFiles(folderid);
         }
     });
 }
@@ -533,9 +500,8 @@ function UploadFile(customURL, fid) {
 function DownloadFile(customURL) {
     window.open(customURL);
 }
-// Downloading file
+// Deleteing file
 function DeleteFile(customURL, folderid) {
-    // window.open(customURL);
     $.ajax({
         dataType: 'json',
         type: "GET",
@@ -544,7 +510,6 @@ function DeleteFile(customURL, folderid) {
         processData: false,
         success: function (response) {
             alert("File Deleted");
-
             CreateFileTable();
             GetAllFiles(folderid);
         }
@@ -563,12 +528,10 @@ function CreateFileTable() {
 }
 // Creating visting directory path
 function CreatePath(foldername, folderid) {
-
-    // Creating angle right symbol
     var angle = $("<i>");
     angle.addClass("fa fa-angle-right");
     angle.appendTo("#breadcrumbs");
-    // Creating span
+    
     var button = $("<button>");
     button.text(foldername);
     button.attr('id', folderid);
@@ -602,9 +565,6 @@ function SearchFile(searchable,ownerid) {
             }
             // Replace table’s tbody html with fileInfo
                 $("#fileInfoTable tbody").html(fileInfo);
-              //  console.log(JSONObject);
         }
-
-    });
-        
+    });    
 }
